@@ -141,6 +141,9 @@ class litecal_plugin_style_litecal extends views_plugin_style {
 
         $litecal = new litecal_month($arg_from, $arg_to, $options);
         break;
+      default:
+        drupal_set_message('Litecal: Argument ' . (string)$arg_pos . ' has date granularity of ' . $arg_granularity . ' which is not implemented.', 'error');
+        return;
     }
 
     $items = array();
