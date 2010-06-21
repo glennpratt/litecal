@@ -145,6 +145,18 @@ class litecal_plugin_style_litecal extends views_plugin_style {
 
     $items = array();
 
+    // Get timezone to render the calendar in.
+    if (variable_get('configurable_timezones', 1)) {
+      global $user;
+      if ($user->timezone_name) {
+        $tzs = $user->timezone_name;
+      }
+    }
+    else {
+      $tzs = variable_get('date_default_timezone_name', 0);
+    }
+    $tz = timezone_open($tzs);
+
     // Find date fields and generate litecal items from them
     if (!empty($view->date_info->date_handler_fields)) {
       $date_field = $view->date_info->date_handler_fields;
@@ -162,6 +174,9 @@ class litecal_plugin_style_litecal extends views_plugin_style {
           $item = new StdClass();
           $item->from = date_convert($row->{$alias_from}, DATE_ISO, DATE_OBJECT);
           $item->to = date_convert($row->{$alias_to}, DATE_ISO, DATE_OBJECT);
+          // Apply current timezone to UTC dates.
+          date_timezone_set($item->from, $tz);
+          date_timezone_set($item->to, $tz);
           $item->id = !empty($colorby_field) ? $colorby_field->render($row) : $row->{$view->base_field};
           $item->data = $vars['rows'][$num];
 
