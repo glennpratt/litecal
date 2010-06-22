@@ -141,16 +141,17 @@ class litecal_plugin_style_litecal extends views_plugin_style {
 
         $litecal = new litecal_month($arg_from, $arg_to, $options);
         break;
+      default:
+        drupal_set_message('Litecal: Argument ' . (string)$arg_pos . ' has date granularity of ' . $arg_granularity . ' which is not implemented.', 'error');
+        return;
     }
 
     $items = array();
 
     // Get timezone to render the calendar in.
-    if (variable_get('configurable_timezones', 1)) {
-      global $user;
-      if ($user->timezone_name) {
-        $tzs = $user->timezone_name;
-      }
+    global $user;
+    if ($user->timezone_name && variable_get('configurable_timezones', 1)) {
+      $tzs = $user->timezone_name;
     }
     else {
       $tzs = variable_get('date_default_timezone_name', 0);
